@@ -14,7 +14,7 @@
 
 
 
-
+#define BINGOS_SECTOR_SIZE 512
 
 
 
