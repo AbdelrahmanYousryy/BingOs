@@ -25,11 +25,14 @@ void kheap_init()
     }
 }
 
+
+/** Allocate size `size` in kernel heap  */
 void* kmalloc(size_t size)
 {
     return heap_malloc(&kenel_heap , size);
 }
 
+/** Allocate size `size` in kernel heap and initialize to 0  */
 void* kzalloc(size_t size)
 {
     void* ptr = kmalloc(size);
@@ -39,6 +42,8 @@ void* kzalloc(size_t size)
 
 }
 
+
+/** Deallocate the memory in pointer `ptr` */
 void kfree(void* ptr)
 {
     heap_free(&kenel_heap,ptr);

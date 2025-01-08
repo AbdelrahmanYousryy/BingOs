@@ -6,6 +6,8 @@
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
+#include "fs/pparser.h"
+#include "string/string.h"
 // Pointer to the specific address for writing to screen
 uint16_t* video_mem = 0;
 // counters to track the current location to print
@@ -46,16 +48,7 @@ void terminal_writechar(char c , char color)
     }
 
 }
-/** Calculate the length of a string */
-size_t strlen(const char* str)
-{
-    size_t len = 0;
-    while(str[len])
-    {
-        len++;
-    }
-    return len;
-}
+
 
 /** Print String to Terminal */
 void print(const char* str)
@@ -114,6 +107,9 @@ void kernel_main()
 
     // Enable The system Interrupts
     enable_interrupts();
+
+    struct path_root* root_path =pathparser_parse("0:/bin/shell.exe", NULL);
+    if(root_path);
   
 
 }
