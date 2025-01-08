@@ -8,6 +8,7 @@
 #include "disk/disk.h"
 #include "fs/pparser.h"
 #include "string/string.h"
+#include "disk/streamer.h"
 // Pointer to the specific address for writing to screen
 uint16_t* video_mem = 0;
 // counters to track the current location to print
@@ -108,9 +109,11 @@ void kernel_main()
     // Enable The system Interrupts
     enable_interrupts();
 
-    struct path_root* root_path =pathparser_parse("0:/bin/shell.exe", NULL);
-    if(root_path);
-  
+   struct disk_stream* stream = diskstream_new(0);
+   disksteram_seek(stream , 0x201);
+   unsigned char  c = 0 ;
+   diskstream_read(stream , &c , 1);
+    while(1);
 
 }
 
