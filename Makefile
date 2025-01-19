@@ -22,8 +22,16 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	dd if=./bin/boot.bin >> ./bin/os.bin
 #   add the kernel to os
 	dd if=./bin/kernel.bin >> ./bin/os.bin
-# 	fill in 10 sectors in zeros so we can be able to read 10 sectors
-	dd if=/dev/zero bs=512 count=100 >>./bin/os.bin
+# 	fill in 16 Mb in zeros so we can be able to store our file data
+	dd if=/dev/zero bs=1048576 count=16 >>./bin/os.bin
+#	mount the filesystem on /mnt/d
+	sudo mount -t vfat ./bin/os.bin /mnt/d
+#	copy a file over
+	sudo cp ./hello.txt /mnt/d
+#	unmount the filesystem
+	sudo umount /mnt/d
+
+
 
 # 	Assemble and compile the kernel to  bin from dependency $FILES
 ./bin/kernel.bin: $(FILES)

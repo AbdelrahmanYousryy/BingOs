@@ -6,13 +6,34 @@ BITS 16
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
 
+jmp short start
+nop
 
-; BIOS Parameter Block
-_start:
-    jmp short start
-    nop
 
-times 33 db 0
+; FAT16 Header
+OEMIdentifier       db 'BINGOS  '  ; 8 bytes identifier
+BytesPerSector      dw 0x200       ; 512 bytes per sector
+SectorsPerCluster   db 0x80        ; 128 sector per cluster
+ReservedSectors     dw 200         ; 200 Sectors reserved for the kernel
+FatCopies           db 0x02        ; 2 Fat Copies ( the original and a backuo)
+RootDirEntries      dw 0x40        ; Root Directories number
+NumSectors          dw 0x00
+MediaType           db 0xF8
+SectorsPerFat       dw 0x100
+SectorsPerTrack     dw 0x20
+NumberofHeads       dw 0x40
+HiddenSectors       dd 0x00
+SectorsBig          dd 0x773594
+
+; Extended BPB (Dos 4.00)
+DriveNumber         db 0x80
+WinNTBit            db 0x00
+Signature           db 0x29
+VolumeID            dd 0xD105
+VolumeIDString      db 'BINGOS BOOT'
+SystemIDString      db 'FAT16   '
+
+
 ; start label
 start:
     ; changing code segment to 0x7c0
