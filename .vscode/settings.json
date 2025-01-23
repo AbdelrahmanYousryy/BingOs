@@ -8,6 +8,7 @@
         "memory.h": "c",
         "status.h": "c",
         "kheap.h": "c",
-        "paging.h": "c"
+        "paging.h": "c",
+        "file.h": "c"
     }
 }

@@ -1,6 +1,7 @@
 #ifndef DISK_H
 #define DISK_H
 
+#include "fs/file.h"
 typedef unsigned int BINGOS_DISK_TYPE;
 
 // represents a real physical hard disk
@@ -8,8 +9,12 @@ typedef unsigned int BINGOS_DISK_TYPE;
 
 struct disk
 {
+    // type of the disk
     BINGOS_DISK_TYPE type;
+    // sector size of the disk
     int sector_size;
+    // filesystem binded to this disk
+    struct filesystem* filesystem;
 
 };
 

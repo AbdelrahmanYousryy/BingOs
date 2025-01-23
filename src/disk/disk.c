@@ -56,8 +56,12 @@ int disk_read_sector(int lba , int total , void* buf)
 void disk_search_and_init()
 {
     memset(&disk , 0 ,sizeof(disk));
+    // assign type of the disk
     disk.type = BINGOS_DISK_TYPE_REAL;
+    // assign sector size to the disk
     disk.sector_size = BINGOS_SECTOR_SIZE;
+    // assign the compatible file system to the disk
+    disk.filesystem = fs_resolve(&disk);
 
 }
 
