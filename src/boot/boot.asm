@@ -1,31 +1,34 @@
-; Bios loads the bootloader to 0x7c00
-ORG 0x7c00
+; Bios loads this bootloader from the first sector of the bootable drive
+; into memory at address 0x7C00 
+ORG 0x7c00 ; makes sure that this code is at 0x7C00
 ; using 16 bits code
 BITS 16
 
-CODE_SEG equ gdt_code - gdt_start
-DATA_SEG equ gdt_data - gdt_start
+; define the code and data segment offsets inside the GDT
+CODE_SEG equ gdt_code - gdt_start ; calculates the offset of the code segment
+DATA_SEG equ gdt_data - gdt_start ; calculates the offset of the data segment
 
-jmp short start
+jmp short start ; jump to the start label
 nop
 
 
-; FAT16 Header
-OEMIdentifier       db 'BINGOS  '  ; 8 bytes identifier
-BytesPerSector      dw 0x200       ; 512 bytes per sector
-SectorsPerCluster   db 0x80        ; 128 sector per cluster
-ReservedSectors     dw 200         ; 200 Sectors reserved for the kernel
-FatCopies           db 0x02        ; 2 Fat Copies ( the original and a backuo)
-RootDirEntries      dw 0x40        ; Root Directories number
-NumSectors          dw 0x00
-MediaType           db 0xF8
-SectorsPerFat       dw 0x100
-SectorsPerTrack     dw 0x20
-NumberofHeads       dw 0x40
-HiddenSectors       dd 0x00
-SectorsBig          dd 0x773594
+; FAT16 Boot Sector Header
+;The next few lines store FAT16 filesystem metadata.
+OEMIdentifier       db 'BINGOS  '   ; 8 bytes identifier
+BytesPerSector      dw 0x200        ; 512 bytes per sector
+SectorsPerCluster   db 0x80         ; 128 sector per cluster
+ReservedSectors     dw 200          ; 200 Sectors reserved for the kernel
+FatCopies           db 0x02         ; 2 Fat Copies ( the original and a backuo)
+RootDirEntries      dw 0x40         ; 64 Root Directories entries
+NumSectors          dw 0x00         ; Number of sectors (0 for large disks)
+MediaType           db 0xF8         ; Media descriptor ( Hard Drive )
+SectorsPerFat       dw 0x100        ; Number of sectors per FAT table
+SectorsPerTrack     dw 0x20         ; 32 Sectors per track
+NumberofHeads       dw 0x40         ; 64 heads (CHS addressing)
+HiddenSectors       dd 0x00         ; Hidden sectors before partiotion
+SectorsBig          dd 0x773594     ; large sector count
 
-; Extended BPB (Dos 4.00)
+; Extended BPB (Dos 4.00) for Identification
 DriveNumber         db 0x80
 WinNTBit            db 0x00
 Signature           db 0x29
@@ -43,16 +46,18 @@ step2:
     cli ; clear Interrupts
     ; setiing the segments manually to make sure its in 0x7c00
     mov ax , 0x00
-    mov ds , ax
-    mov es , ax
-    mov ss , ax
-    mov sp , 0x7c00
+    mov ds , ax ; Data Segmengt
+    mov es , ax ; Extra Segment
+    mov ss , ax ; Stack Segment
+    mov sp , 0x7c00c ;Stack Pointer
     sti              ; Enable Interrupts
-    
+
+; The Following Lines are responsible for switching to the protected mode
 .load_protected:
-    cli
-    lgdt[gdt_descriptor]
-    mov eax , cr0
+    cli                     ; Disable Interrupt
+    lgdt[gdt_descriptor]    ; Load the Global Descriptor Table
+    ; Enbale Protected Mode
+    mov eax , cr0           
     or eax , 0x1
     mov cr0 , eax
     jmp CODE_SEG:load_32
@@ -89,6 +94,8 @@ gdt_descriptor:
     dw gdt_end - gdt_start -1
     dd gdt_start
 
+
+; The Following Lines of code are executed in the protecteed mode
 [BITS 32]
 load_32:
     ; load the kernel into memory
@@ -160,6 +167,6 @@ ata_lba_read:
     ret
 
 
-
+; BootLoader Signature
 times 510-($ - $$) db 0
 dw 0xAA55
