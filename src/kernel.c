@@ -6,7 +6,7 @@
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
-
+#include "fs/file.h"
 #include "string/string.h"
 #include "disk/streamer.h"
 // Pointer to the specific address for writing to screen
@@ -88,6 +88,9 @@ void kernel_main()
     // Initialize the heap
     kheap_init();
     
+
+    // Initialize the filesystem
+    fs_init();
     // search and initialize the disks
     disk_search_and_init();
     //Initialize Interrupt Descriptor Table
@@ -109,10 +112,9 @@ void kernel_main()
     // Enable The system Interrupts
     enable_interrupts();
 
-   struct disk_stream* stream = diskstream_new(0);
-   disksteram_seek(stream , 0x201);
-   unsigned char  c = 0 ;
-   diskstream_read(stream , &c , 1);
+    char buf[20];
+    strcpy(buf ,"Hello!");
+    print(buf);
     while(1);
 
 }

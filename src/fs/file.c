@@ -4,6 +4,7 @@
 #include "../status.h"
 #include "memory/heap/kheap.h"
 #include "kernel.h"
+#include "fat/fat16.h"
 struct filesystem* filesystems[BINGOS_MAX_FILESYSTEMS];
 struct file_descriptor* file_descriptors[BINGOS_MAX_FILE_DESCRIPTORS];
 
@@ -21,7 +22,7 @@ static struct filesystem** fs_get_free_filesystem()
 }
 
 /** inserts new filesystem `filesystem` into the kernel */
-void fs_insert_filesystm(struct filesystem* filesystem)
+void fs_insert_filesystem(struct filesystem* filesystem)
 {
     //if(filesystem == 0)panic();
     // get a free filesystem slot
@@ -40,7 +41,7 @@ void fs_insert_filesystm(struct filesystem* filesystem)
 /** Loads static filesystems(filesystems build inside the kernel) */
 static void fs_static_load()
 {
-    //fs_insert_filesystem(fat16_init());
+    fs_insert_filesystem(fat16_init());
 
 }
 

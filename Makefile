@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/string/string.o ./build/fs/pparser.o ./build/disk/diskstreamer.o ./build/fs/file.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/string/string.o ./build/fs/pparser.o ./build/disk/diskstreamer.o ./build/fs/file.o ./build/fs/fat/fat16.o
 INCLUDES = -I./src
 FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 # -g Enable Debugging -O0 Disables Optimization
@@ -13,7 +13,7 @@ FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign
 # -Wno Suppresseds warnings
 # -fno-builtin prevents the compiler from asuming std lib functions
 # -Wall Enables Most Warning Messages 
-# 
+
 
 # 	Solves dependencies from ./bin/boot.bin ./bin/kernel.bin first from below
 all: ./bin/boot.bin ./bin/kernel.bin 
@@ -102,6 +102,12 @@ all: ./bin/boot.bin ./bin/kernel.bin
 # 	Compile vfs  C code
 ./build/fs/file.o: ./src/fs/file.c
 	i686-elf-gcc $(INCLUDES) -I./src/fs $(FLAGS) -std=gnu99 -c ./src/fs/file.c -o ./build/fs/file.o
+
+
+# 	Compile fat16  C code
+./build/fs/fat/fat16.o: ./src/fs/fat/fat16.c
+	i686-elf-gcc $(INCLUDES) -I./src/fs -I./src/fs/fat $(FLAGS) -std=gnu99 -c ./src/fs/fat/fat16.c -o ./build/fs/fat/fat16.o
+
 
 
 #	Delete bin files

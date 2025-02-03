@@ -9,6 +9,8 @@
         "status.h": "c",
         "kheap.h": "c",
         "paging.h": "c",
-        "file.h": "c"
+        "file.h": "c",
+        "fat16.h": "c",
+        "string.h": "c"
     }
 }

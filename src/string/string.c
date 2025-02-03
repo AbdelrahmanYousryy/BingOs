@@ -37,3 +37,18 @@ int strnlen(const char* ptr , int max)
     }
     return i ;
 }
+
+/** Copy `src` into `dest` */
+char* strcpy(char* dest , const char* src)
+{
+    char* res = dest;
+    while(*src != '\0')
+    {
+        *dest = *src;
+         src += 1;
+         dest += 1;
+    }
+    // append the null terminator
+    *dest = '\0';
+    return res;
+}
