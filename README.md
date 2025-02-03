@@ -17,15 +17,20 @@ This repository will serve as both a learning journal and a reference for others
 ## Features  
 
 ### Implemented  
-- Basic bootloader for kernel loading.  
-- Paging system for virtual memory management.  
-- Initial interrupt handling for hardware and software interrupts.  
+- Basic bootloader for kernel loading and switching to protected mode.  
+- Interrupt Descriptor Table .  
+- Programmable Interrupt Controller.
+- Heap Segment .
+- Paging .
+- Disk Driver  .  
 
 ### Planned  
-- Process scheduling with a round-robin algorithm.  
-- Support for threading and concurrency.  
-- Debugging tools for kernel internals.  
-- Enhanced system call handling for user-mode processes.  
+- Virtual FileSystem Implementation .  
+- FAT16 Filesystem Implementation .  
+- Task Handling and Schedueling .  
+- Process Switching Mechanism.
+- Elf loader .
+- Shell Creation .  
 
 ---
 
@@ -58,13 +63,20 @@ cd multithreaded-kernel
 
 ## Roadmap  
 
-- [x] Bootloader implementation  
-- [x] Basic paging system  
-- [ ] Implement process scheduling  
-- [ ] Add threading model  
-- [ ] Debug system calls  
+- [x] Bootloader implementation    
+- [x] Basic bootloader for kernel loading and switching to protected mode.  
+- [x] Interrupt Descriptor Table .  
+- [x] Programmable Interrupt Controller.
+- [x] Heap Segment .
+- [x] Paging .
+- [x] Disk Driver  .    
+- [ ] Virtual FileSystem Implementation .  
+- [ ] FAT16 Filesystem Implementation .  
+- [ ] Task Handling and Schedueling .  
+- [ ] Process Switching Mechanism.
+- [ ] Elf loader .
+- [ ] Shell Creation .  
 
----
 
 ## Contributing  
 Contributions are welcome! If you’d like to collaborate:  
