@@ -6,14 +6,15 @@
 
 #include "disk.h"
 
+/** Struct to represent a stream for a disk */
 struct disk_stream
 {
-    int pos ; // current position to read in the disk `disk` (byte position)
-    struct disk* disk;
+    int pos ;           // current position to read in the disk `disk` (byte position)
+    struct disk* disk;  // the disk which the stream is inside
 };
 
 struct disk_stream* diskstream_new (int disk_id);
-int disksteram_seek(struct disk_stream* stream ,int pos);
+int diskstream_seek(struct disk_stream* stream ,int pos);
 int diskstream_read(struct disk_stream* stream , void* out , int total);
 void diskstream_close(struct disk_stream* stream);
 

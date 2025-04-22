@@ -1,24 +1,29 @@
 #include "streamer.h"
 #include "memory/heap/kheap.h"
 #include "config.h"
-
-/** Creates a new disk stream */
+#include  <stdbool.h>
+/** Creates a new disk stream and binds it to disk with id `disk_id` */
 struct disk_stream* diskstream_new (int disk_id)
 {
+    // retrieve the disk
     struct disk* disk = disk_get(disk_id);
+    // check if the disk is valid
     if(!disk)
     {
         return 0 ;
     }
 
+    // initialize the streamer
     struct disk_stream* streamer = kzalloc(sizeof(struct disk_stream));
     streamer->pos = 0;
     streamer->disk = disk;
+
+    // retutn the streamer
     return streamer;
 }
 
 /** Reposition the position of the disk stream */
-int disksteram_seek(struct disk_stream* stream ,int pos)
+int diskstream_seek(struct disk_stream* stream ,int pos)
 {
     stream -> pos = pos;
     return 0 ;
@@ -29,35 +34,36 @@ int disksteram_seek(struct disk_stream* stream ,int pos)
  */
 int diskstream_read(struct disk_stream* stream , void* out , int total)
 {
-    // get the sector we will read
+    
     int sector = stream->pos / BINGOS_SECTOR_SIZE;
-    // get the offset inside the sector we will read
-    int offset = stream ->pos % BINGOS_SECTOR_SIZE;
+    int offset = stream->pos % BINGOS_SECTOR_SIZE;
+    int total_to_read = total;
+    bool overflow = (offset+total_to_read) >= BINGOS_SECTOR_SIZE;
     char buf[BINGOS_SECTOR_SIZE];
 
-    // read one sector into buf
-    int res = disk_read_block(stream->disk , sector , 1 , buf);
-    if (res < 0 )
+    if (overflow)
+    {
+        total_to_read -= (offset+total_to_read) - BINGOS_SECTOR_SIZE;
+    }
+
+    int res = disk_read_block(stream->disk, sector, 1, buf);
+    if (res < 0)
     {
         goto out;
     }
 
-    int total_to_read = total > BINGOS_SECTOR_SIZE ? BINGOS_SECTOR_SIZE : total; 
-    // copy the bytes we want to read into out
-    for(int i = 0 ; i < total_to_read ; i++)
+   
+    for (int i = 0; i < total_to_read; i++)
     {
         *(char*)out++ = buf[offset+i];
     }
 
-    // adjust the stream
+    // Adjust the stream
     stream->pos += total_to_read;
-
-    // if we want to read more than one sector we do this process again 
-    if (total > BINGOS_SECTOR_SIZE)
+    if (overflow)
     {
-        res = diskstream_read(stream , out , total - BINGOS_SECTOR_SIZE);
+        res = diskstream_read(stream, out, total-total_to_read);
     }
-
 out:
     return res;
 

@@ -14,6 +14,8 @@
 
 
 
+#define BINGOS_MAX_PATH 108
+
 #define BINGOS_SECTOR_SIZE 512
 
 

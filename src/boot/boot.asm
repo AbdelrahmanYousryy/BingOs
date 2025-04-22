@@ -14,19 +14,19 @@ nop
 
 ; FAT16 Boot Sector Header
 ;The next few lines store FAT16 filesystem metadata.
-OEMIdentifier       db 'BINGOS  '   ; 8 bytes identifier
-BytesPerSector      dw 0x200        ; 512 bytes per sector
-SectorsPerCluster   db 0x80         ; 128 sector per cluster
-ReservedSectors     dw 200          ; 200 Sectors reserved for the kernel
+OEMIdentifier       db 'BINGOS  '   ; 8 bytes identifier                        
+BytesPerSector      dw 0x200        ; 512 bytes per sector                      
+SectorsPerCluster   db 0x80         ; 128 sector per cluster                        
+ReservedSectors     dw 200          ; 200 Sectors reserved for the kernel       
 FatCopies           db 0x02         ; 2 Fat Copies ( the original and a backuo)
-RootDirEntries      dw 0x40         ; 64 Root Directories entries
-NumSectors          dw 0x00         ; Number of sectors (0 for large disks)
-MediaType           db 0xF8         ; Media descriptor ( Hard Drive )
-SectorsPerFat       dw 0x100        ; Number of sectors per FAT table
-SectorsPerTrack     dw 0x20         ; 32 Sectors per track
-NumberofHeads       dw 0x40         ; 64 heads (CHS addressing)
-HiddenSectors       dd 0x00         ; Hidden sectors before partiotion
-SectorsBig          dd 0x773594     ; large sector count
+RootDirEntries      dw 0x40         ; 64 Root Directories entries               
+NumSectors          dw 0x00         ; Number of sectors (0 for large disks)     
+MediaType           db 0xF8         ; Media descriptor ( Hard Drive )           
+SectorsPerFat       dw 0x100        ; Number of sectors per FAT table           
+SectorsPerTrack     dw 0x20         ; 32 Sectors per track                      
+NumberofHeads       dw 0x40         ; 64 heads (CHS addressing)                 
+HiddenSectors       dd 0x00         ; Hidden sectors before partiotion          
+SectorsBig          dd 0x773594     ; large sector count                            
 
 ; Extended BPB (Dos 4.00) for Identification
 DriveNumber         db 0x80

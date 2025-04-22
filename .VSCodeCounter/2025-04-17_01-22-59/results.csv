@@ -1,0 +1,42 @@
+"filename", "language", "Markdown", "C", "C++", "Shell Script", "Assembly", "LinkerScript", "Makefile", "comment", "blank", "total"
+"/home/yousry/Desktop/BingOs/CHANGELOG.md", "Markdown", 86, 0, 0, 0, 0, 0, 0, 0, 26, 112
+"/home/yousry/Desktop/BingOs/Makefile", "Makefile", 0, 0, 0, 0, 0, 0, 54, 38, 28, 120
+"/home/yousry/Desktop/BingOs/README.md", "Markdown", 76, 0, 0, 0, 0, 0, 0, 0, 22, 98
+"/home/yousry/Desktop/BingOs/build.sh", "Shell Script", 0, 0, 0, 4, 0, 0, 0, 1, 2, 7
+"/home/yousry/Desktop/BingOs/docs/Disk Streamer.md", "Markdown", 34, 0, 0, 0, 0, 0, 0, 0, 9, 43
+"/home/yousry/Desktop/BingOs/docs/FAT16.md", "Markdown", 18, 0, 0, 0, 0, 0, 0, 0, 13, 31
+"/home/yousry/Desktop/BingOs/docs/Path Parser.md", "Markdown", 36, 0, 0, 0, 0, 0, 0, 0, 12, 48
+"/home/yousry/Desktop/BingOs/src/boot/boot.asm", "Assembly", 0, 0, 0, 0, 110, 0, 0, 33, 29, 172
+"/home/yousry/Desktop/BingOs/src/config.h", "C", 0, 14, 0, 0, 0, 0, 0, 1, 13, 28
+"/home/yousry/Desktop/BingOs/src/disk/disk.c", "C", 0, 51, 0, 0, 0, 0, 0, 16, 18, 85
+"/home/yousry/Desktop/BingOs/src/disk/disk.h", "C++", 0, 0, 17, 0, 0, 0, 0, 8, 6, 31
+"/home/yousry/Desktop/BingOs/src/disk/streamer.c", "C", 0, 53, 0, 0, 0, 0, 0, 10, 12, 75
+"/home/yousry/Desktop/BingOs/src/disk/streamer.h", "C++", 0, 0, 13, 0, 0, 0, 0, 4, 4, 21
+"/home/yousry/Desktop/BingOs/src/fs/fat/fat16.c", "C", 0, 308, 0, 0, 0, 0, 0, 84, 77, 469
+"/home/yousry/Desktop/BingOs/src/fs/fat/fat16.h", "C", 0, 5, 0, 0, 0, 0, 0, 1, 7, 13
+"/home/yousry/Desktop/BingOs/src/fs/file.c", "C", 0, 148, 0, 0, 0, 0, 0, 39, 33, 220
+"/home/yousry/Desktop/BingOs/src/fs/file.h", "C", 0, 38, 0, 0, 0, 0, 0, 16, 15, 69
+"/home/yousry/Desktop/BingOs/src/fs/pparser.c", "C", 0, 111, 0, 0, 0, 0, 0, 42, 22, 175
+"/home/yousry/Desktop/BingOs/src/fs/pparser.h", "C++", 0, 0, 15, 0, 0, 0, 0, 4, 7, 26
+"/home/yousry/Desktop/BingOs/src/idt/idt.asm", "Assembly", 0, 0, 0, 0, 35, 0, 0, 0, 10, 45
+"/home/yousry/Desktop/BingOs/src/idt/idt.c", "C", 0, 46, 0, 0, 0, 0, 0, 12, 18, 76
+"/home/yousry/Desktop/BingOs/src/idt/idt.h", "C", 0, 20, 0, 0, 0, 0, 0, 0, 16, 36
+"/home/yousry/Desktop/BingOs/src/io/io.asm", "Assembly", 0, 0, 0, 0, 37, 0, 0, 0, 10, 47
+"/home/yousry/Desktop/BingOs/src/io/io.h", "C++", 0, 0, 7, 0, 0, 0, 0, 4, 12, 23
+"/home/yousry/Desktop/BingOs/src/kernel.asm", "Assembly", 0, 0, 0, 0, 26, 0, 0, 8, 7, 41
+"/home/yousry/Desktop/BingOs/src/kernel.c", "C", 0, 76, 0, 0, 0, 0, 0, 20, 26, 122
+"/home/yousry/Desktop/BingOs/src/kernel.h", "C", 0, 11, 0, 0, 0, 0, 0, 0, 6, 17
+"/home/yousry/Desktop/BingOs/src/linker.ld", "LinkerScript", 0, 0, 0, 0, 0, 27, 0, 4, 2, 33
+"/home/yousry/Desktop/BingOs/src/memory/heap/heap.c", "C", 0, 142, 0, 0, 0, 0, 0, 23, 38, 203
+"/home/yousry/Desktop/BingOs/src/memory/heap/heap.h", "C++", 0, 0, 24, 0, 0, 0, 0, 11, 12, 47
+"/home/yousry/Desktop/BingOs/src/memory/heap/kheap.c", "C", 0, 34, 0, 0, 0, 0, 0, 7, 9, 50
+"/home/yousry/Desktop/BingOs/src/memory/heap/kheap.h", "C", 0, 9, 0, 0, 0, 0, 0, 1, 3, 13
+"/home/yousry/Desktop/BingOs/src/memory/memory.c", "C", 0, 23, 0, 0, 0, 0, 0, 1, 2, 26
+"/home/yousry/Desktop/BingOs/src/memory/memory.h", "C", 0, 6, 0, 0, 0, 0, 0, 1, 7, 14
+"/home/yousry/Desktop/BingOs/src/memory/paging/paging.asm", "Assembly", 0, 0, 0, 0, 19, 0, 0, 3, 9, 31
+"/home/yousry/Desktop/BingOs/src/memory/paging/paging.c", "C", 0, 67, 0, 0, 0, 0, 0, 30, 25, 122
+"/home/yousry/Desktop/BingOs/src/memory/paging/paging.h", "C", 0, 24, 0, 0, 0, 0, 0, 3, 9, 36
+"/home/yousry/Desktop/BingOs/src/status.h", "C", 0, 10, 0, 0, 0, 0, 0, 0, 3, 13
+"/home/yousry/Desktop/BingOs/src/string/string.c", "C", 0, 97, 0, 0, 0, 0, 0, 9, 14, 120
+"/home/yousry/Desktop/BingOs/src/string/string.h", "C", 0, 13, 0, 0, 0, 0, 0, 0, 4, 17
+"Total", "-", 250, 1306, 76, 4, 227, 27, 54, 434, 597, 2975

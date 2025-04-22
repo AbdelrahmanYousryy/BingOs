@@ -7,14 +7,20 @@ typedef unsigned int BINGOS_DISK_TYPE;
 // represents a real physical hard disk
 #define BINGOS_DISK_TYPE_REAL 0
 
+/* Representation of the disk*/
 struct disk
 {
+    // id of the disk can be used for better implementation to handle multple disks
+    int id;
     // type of the disk
     BINGOS_DISK_TYPE type;
     // sector size of the disk
     int sector_size;
     // filesystem binded to this disk
     struct filesystem* filesystem;
+
+    // private data of our filesystem
+    void* fs_private;
 
 };
 

@@ -31,23 +31,6 @@ All notable changes to this project will be documented in this file.
 - int strnlen(const char* ptr , int max) .
 
 
-## [2025-1-8]  (PATH PARSER - STRING LIB) Implementaion 
-### Added
-- static int pathparser_path_valid_format(const char* filename) .
-- static int pathparser_get_drive_by_path (const char** path).
-- static const char* pathparser_get_path_part(const char** path) . 
-- struct path_part* pathparser_parse_path_part(struct path_part* last_part , const char ** path) .
-- void   pathparser_free(struct path_root* root) .
-- struct path_root* pathparser_parse(const char* path , const char* current_directory_path) .
-- struct path_root .
-- struct path_part .
-- int memcmp(void* s1 , void* s2 , int count) .
-- int strlen(const char* ptr) .
-- bool isdigit(char c) .
-- int tonumericdigit(char c) . 
-- int strnlen(const char* ptr , int max) .
-
-
 ## [2025-1-10]  (Disk Streamer) Implementaion 
 ### Added
 - struct disk_stream;
@@ -103,3 +86,27 @@ All notable changes to this project will be documented in this file.
 ### notes 
 - So now we can insert fat16 filesystem into kernel with fs_insert_filesystem(fat16_init())
 - void disk_search_and_init() initializes the main disk and searches for appropriate filesystem to attach to it
+
+
+
+## [2025-3-19]  (FAT16 Core) Implementation 
+### Added
+- struct fat_header_extended 
+- struct fat_header
+- struct fat_h 
+- struct fat_directory_item
+- struct fat_directory
+- struct fat_item
+- struct fat_private
+- int fat16_sector_to_absolute(struct disk* disk , int sector)
+- int fat16_get_total_items_for_directory(struct disk* disk , uint32_t directory_start_sector)
+- int fat16_get_root_directory(struct disk* disk , struct fat_private* fat_private , struct fat_directory* directory)
+- istatic void fat16_init_private(struct disk* disk, struct fat_private* private)
+- int fat16_resolve(struct disk* disk) (implementation)
+- CHANGELOG.md 
+
+### fixed
+- typo in diskstream_seek()
+
+### notes 
+- now we can bind the fat16 filesytem to a disk using the resolve function

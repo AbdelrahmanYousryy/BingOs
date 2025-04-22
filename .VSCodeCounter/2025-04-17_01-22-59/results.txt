@@ -1,0 +1,86 @@
+Date : 2025-04-17 01:22:59
+Directory : /home/yousry/Desktop/BingOs
+Total : 40 files,  1944 codes, 434 comments, 597 blanks, all 2975 lines
+
+Languages
++--------------+------------+------------+------------+------------+------------+
+| language     | files      | code       | comment    | blank      | total      |
++--------------+------------+------------+------------+------------+------------+
+| C            |         22 |      1,306 |        316 |        377 |      1,999 |
+| Markdown     |          5 |        250 |          0 |         82 |        332 |
+| Assembly     |          5 |        227 |         44 |         65 |        336 |
+| C++          |          5 |         76 |         31 |         41 |        148 |
+| Makefile     |          1 |         54 |         38 |         28 |        120 |
+| LinkerScript |          1 |         27 |          4 |          2 |         33 |
+| Shell Script |          1 |          4 |          1 |          2 |          7 |
++--------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                     | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                        |         40 |      1,944 |        434 |        597 |      2,975 |
+| . (Files)                                                |          4 |        220 |         39 |         78 |        337 |
+| docs                                                     |          3 |         88 |          0 |         34 |        122 |
+| src                                                      |         33 |      1,636 |        395 |        485 |      2,516 |
+| src (Files)                                              |          6 |        164 |         33 |         57 |        254 |
+| src/boot                                                 |          1 |        110 |         33 |         29 |        172 |
+| src/disk                                                 |          4 |        134 |         38 |         40 |        212 |
+| src/fs                                                   |          6 |        625 |        186 |        161 |        972 |
+| src/fs (Files)                                           |          4 |        312 |        101 |         77 |        490 |
+| src/fs/fat                                               |          2 |        313 |         85 |         84 |        482 |
+| src/idt                                                  |          3 |        101 |         12 |         44 |        157 |
+| src/io                                                   |          2 |         44 |          4 |         22 |         70 |
+| src/memory                                               |          9 |        348 |         80 |        114 |        542 |
+| src/memory (Files)                                       |          2 |         29 |          2 |          9 |         40 |
+| src/memory/heap                                          |          4 |        209 |         42 |         62 |        313 |
+| src/memory/paging                                        |          3 |        110 |         36 |         43 |        189 |
+| src/string                                               |          2 |        110 |          9 |         18 |        137 |
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------+--------------+------------+------------+------------+------------+
+| filename                                                 | language     | code       | comment    | blank      | total      |
++----------------------------------------------------------+--------------+------------+------------+------------+------------+
+| /home/yousry/Desktop/BingOs/CHANGELOG.md                 | Markdown     |         86 |          0 |         26 |        112 |
+| /home/yousry/Desktop/BingOs/Makefile                     | Makefile     |         54 |         38 |         28 |        120 |
+| /home/yousry/Desktop/BingOs/README.md                    | Markdown     |         76 |          0 |         22 |         98 |
+| /home/yousry/Desktop/BingOs/build.sh                     | Shell Script |          4 |          1 |          2 |          7 |
+| /home/yousry/Desktop/BingOs/docs/Disk Streamer.md        | Markdown     |         34 |          0 |          9 |         43 |
+| /home/yousry/Desktop/BingOs/docs/FAT16.md                | Markdown     |         18 |          0 |         13 |         31 |
+| /home/yousry/Desktop/BingOs/docs/Path Parser.md          | Markdown     |         36 |          0 |         12 |         48 |
+| /home/yousry/Desktop/BingOs/src/boot/boot.asm            | Assembly     |        110 |         33 |         29 |        172 |
+| /home/yousry/Desktop/BingOs/src/config.h                 | C            |         14 |          1 |         13 |         28 |
+| /home/yousry/Desktop/BingOs/src/disk/disk.c              | C            |         51 |         16 |         18 |         85 |
+| /home/yousry/Desktop/BingOs/src/disk/disk.h              | C++          |         17 |          8 |          6 |         31 |
+| /home/yousry/Desktop/BingOs/src/disk/streamer.c          | C            |         53 |         10 |         12 |         75 |
+| /home/yousry/Desktop/BingOs/src/disk/streamer.h          | C++          |         13 |          4 |          4 |         21 |
+| /home/yousry/Desktop/BingOs/src/fs/fat/fat16.c           | C            |        308 |         84 |         77 |        469 |
+| /home/yousry/Desktop/BingOs/src/fs/fat/fat16.h           | C            |          5 |          1 |          7 |         13 |
+| /home/yousry/Desktop/BingOs/src/fs/file.c                | C            |        148 |         39 |         33 |        220 |
+| /home/yousry/Desktop/BingOs/src/fs/file.h                | C            |         38 |         16 |         15 |         69 |
+| /home/yousry/Desktop/BingOs/src/fs/pparser.c             | C            |        111 |         42 |         22 |        175 |
+| /home/yousry/Desktop/BingOs/src/fs/pparser.h             | C++          |         15 |          4 |          7 |         26 |
+| /home/yousry/Desktop/BingOs/src/idt/idt.asm              | Assembly     |         35 |          0 |         10 |         45 |
+| /home/yousry/Desktop/BingOs/src/idt/idt.c                | C            |         46 |         12 |         18 |         76 |
+| /home/yousry/Desktop/BingOs/src/idt/idt.h                | C            |         20 |          0 |         16 |         36 |
+| /home/yousry/Desktop/BingOs/src/io/io.asm                | Assembly     |         37 |          0 |         10 |         47 |
+| /home/yousry/Desktop/BingOs/src/io/io.h                  | C++          |          7 |          4 |         12 |         23 |
+| /home/yousry/Desktop/BingOs/src/kernel.asm               | Assembly     |         26 |          8 |          7 |         41 |
+| /home/yousry/Desktop/BingOs/src/kernel.c                 | C            |         76 |         20 |         26 |        122 |
+| /home/yousry/Desktop/BingOs/src/kernel.h                 | C            |         11 |          0 |          6 |         17 |
+| /home/yousry/Desktop/BingOs/src/linker.ld                | LinkerScript |         27 |          4 |          2 |         33 |
+| /home/yousry/Desktop/BingOs/src/memory/heap/heap.c       | C            |        142 |         23 |         38 |        203 |
+| /home/yousry/Desktop/BingOs/src/memory/heap/heap.h       | C++          |         24 |         11 |         12 |         47 |
+| /home/yousry/Desktop/BingOs/src/memory/heap/kheap.c      | C            |         34 |          7 |          9 |         50 |
+| /home/yousry/Desktop/BingOs/src/memory/heap/kheap.h      | C            |          9 |          1 |          3 |         13 |
+| /home/yousry/Desktop/BingOs/src/memory/memory.c          | C            |         23 |          1 |          2 |         26 |
+| /home/yousry/Desktop/BingOs/src/memory/memory.h          | C            |          6 |          1 |          7 |         14 |
+| /home/yousry/Desktop/BingOs/src/memory/paging/paging.asm | Assembly     |         19 |          3 |          9 |         31 |
+| /home/yousry/Desktop/BingOs/src/memory/paging/paging.c   | C            |         67 |         30 |         25 |        122 |
+| /home/yousry/Desktop/BingOs/src/memory/paging/paging.h   | C            |         24 |          3 |          9 |         36 |
+| /home/yousry/Desktop/BingOs/src/status.h                 | C            |         10 |          0 |          3 |         13 |
+| /home/yousry/Desktop/BingOs/src/string/string.c          | C            |         97 |          9 |         14 |        120 |
+| /home/yousry/Desktop/BingOs/src/string/string.h          | C            |         13 |          0 |          4 |         17 |
+| Total                                                    |              |      1,944 |        434 |        597 |      2,975 |
++----------------------------------------------------------+--------------+------------+------------+------------+------------+

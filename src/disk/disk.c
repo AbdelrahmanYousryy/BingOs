@@ -3,6 +3,8 @@
 #include "status.h"
 #include "memory/memory.h"
 #include "../config.h"
+
+
 //represents the real primary hard disk
 struct disk disk;
 
@@ -60,11 +62,12 @@ void disk_search_and_init()
     disk.type = BINGOS_DISK_TYPE_REAL;
     // assign sector size to the disk
     disk.sector_size = BINGOS_SECTOR_SIZE;
+    disk.id = 0;
     // assign the compatible file system to the disk
     disk.filesystem = fs_resolve(&disk);
 
 }
-
+/**retrieve disk with id `disk_id`*/
 struct disk* disk_get (int index)
 {
     if(index!= 0)return 0 ;

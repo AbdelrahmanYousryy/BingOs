@@ -4,9 +4,20 @@
 #include "../status.h"
 #include "memory/heap/kheap.h"
 #include "kernel.h"
+#include "disk/disk.h"
 #include "fat/fat16.h"
+#include "string/string.h"
+
 struct filesystem* filesystems[BINGOS_MAX_FILESYSTEMS];
 struct file_descriptor* file_descriptors[BINGOS_MAX_FILE_DESCRIPTORS];
+
+
+
+
+
+
+
+
 
 
 /**  Return the first free filesystem slot to insert new filesystem into*/
@@ -119,8 +130,92 @@ struct filesystem* fs_resolve(struct disk* disk)
 
 }
 
-
-int fopen(const char* file_name , const char* mode)
+/** convert string `str` to FILE MODE */
+FILE_MODE file_get_mode_by_string(const char* str)
 {
-    return - EIO;
+    FILE_MODE mode = FILE_MODE_INVALID;
+    if(strncmp(str,"r",1)==0)
+    {
+        mode = FILE_MODE_READ;
+    }
+    else if (strncmp(str,"w",1)==0)
+    {
+        mode = FILE_MODE_WRITE;
+    }
+    else if (strncmp(str,"a",1)==0)
+    {
+        mode = FILE_MODE_APPEND;
+    }
+    return mode;
+}
+
+// responsible for locating the correct file system to open the file
+/* Basically it determines which filesystem this file belongs to and call its open function*/
+int fopen(const char* filename , const char* mode_str)
+{
+    int res = 0;
+    // extract the root path of the file 
+    struct path_root* root_path = pathparser_parse(filename,NULL);
+    if(!root_path)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+
+    // if its only a root path  without a file
+    // ex : 0://
+    if(!root_path->first)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+
+    // get the disk of the file and check if its exists
+    struct disk* disk = disk_get(root_path->drive_no);
+    if(!disk)
+    {
+        res = -EIO;
+        goto out;
+    }
+
+    //  check for a filesystem
+    if(!disk->filesystem)
+    {
+        res = -EIO;
+        goto out;
+
+    }
+
+    // convert mode from string to FILE_MODE and check it
+    FILE_MODE mode = file_get_mode_by_string(mode_str);
+    if  ( mode == FILE_MODE_INVALID)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+
+    // call the right filesystem's open function
+    void* descriptor_private_data = disk->filesystem->open(disk,root_path->first,mode);
+    if (ISERR(descriptor_private_data))
+    {
+        res = ERROR_I(descriptor_private_data);
+        goto out;
+    }
+
+    // initialize the file descriptor struct for this file
+    struct file_descriptor* desc = 0;
+    res = file_new_descriptor(&desc);
+    desc->filesysem = disk->filesystem;
+    desc->private_ptr = descriptor_private_data;
+    desc->disk = disk;
+    // if everything worked return the index of the file
+    res = desc->index;
+
+out:
+// fopen dont return negative values
+    if (res < 0)
+    {
+        res = 0;
+    }
+    return res;
 }
