@@ -5,8 +5,7 @@
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 80
-
-#define BINGOS_MAX_PATH 180
+#define BINGOS_MAX_PATH 108
 void kernel_main();
 void print(const char* str);
 

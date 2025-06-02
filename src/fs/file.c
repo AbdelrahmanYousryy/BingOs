@@ -134,7 +134,7 @@ struct filesystem* fs_resolve(struct disk* disk)
 FILE_MODE file_get_mode_by_string(const char* str)
 {
     FILE_MODE mode = FILE_MODE_INVALID;
-    if(strncmp(str,"r",1)==0)
+    if(strncmp(str, "r", 1) == 0)
     {
         mode = FILE_MODE_READ;
     }
@@ -158,6 +158,7 @@ int fopen(const char* filename , const char* mode_str)
     struct path_root* root_path = pathparser_parse(filename,NULL);
     if(!root_path)
     {
+        print("canot extract path root");
         res = -EINVARG;
         goto out;
     }
@@ -166,6 +167,7 @@ int fopen(const char* filename , const char* mode_str)
     // ex : 0://
     if(!root_path->first)
     {
+        print("only root");
         res = -EINVARG;
         goto out;
     }
@@ -190,6 +192,7 @@ int fopen(const char* filename , const char* mode_str)
     FILE_MODE mode = file_get_mode_by_string(mode_str);
     if  ( mode == FILE_MODE_INVALID)
     {
+        print("canot convert path root");
         res = -EINVARG;
         goto out;
     }
@@ -205,6 +208,10 @@ int fopen(const char* filename , const char* mode_str)
     // initialize the file descriptor struct for this file
     struct file_descriptor* desc = 0;
     res = file_new_descriptor(&desc);
+    if (res < 0)
+    {
+        goto out;
+    }
     desc->filesysem = disk->filesystem;
     desc->private_ptr = descriptor_private_data;
     desc->disk = disk;

@@ -79,7 +79,6 @@ int strnlen_terminator(const char* str , int max , char terminator)
 int strncmp(const char* str1 , const char* str2 , int n)
 {
     unsigned char u1 , u2;
-    int res = -1;
     while(n-- > 0)
     {
         u1 = (unsigned char)*str1++;
@@ -93,7 +92,7 @@ int strncmp(const char* str1 , const char* str2 , int n)
             return 0;
         }
     }
-    return res;
+    return 0;
 }
 
 /** Case insensetive Compare string `s1` and string `s2` */
