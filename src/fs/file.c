@@ -226,3 +226,27 @@ out:
     }
     return res;
 }
+
+int fread(void* ptr , uint32_t size , uint32_t nmemb, int fd)
+{
+    int res = 0;
+    // check arguments
+    if(size ==0 || nmemb ==0 || fd < 1)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+
+    // retreive the file descriptor fromits index
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if(!desc)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+
+    // read the data from the file
+    res = desc->filesysem->read(desc->disk, desc->private_ptr ,size,nmemb, (char*) ptr);
+out:
+    return res;
+}

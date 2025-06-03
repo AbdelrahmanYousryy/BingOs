@@ -1,6 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 #include "pparser.h"
+#include <stdint.h>
 typedef unsigned int FILE_SEEK_MODE;
 enum
 {
@@ -20,8 +21,12 @@ enum{
 };
 struct disk;
 
+
 // each filesystem will declare this pointers to its internal functions
 typedef void*(*FS_OPEN_FUNCTION)(struct disk* disk , struct path_part* path , FILE_MODE mode);
+// nmemb: how many blocks needed to be read
+typedef int (*FS_READ_FUNCTION)(struct disk* disk , void* private , uint32_t size, uint32_t nmemb, char* out);
+
 // resolve function for every filesystem checks if the provided disk is compatible with it 
 typedef int(*FS_RESOLVE_FUNCTION)(struct disk* disk);
 
@@ -34,6 +39,8 @@ struct filesystem
     FS_RESOLVE_FUNCTION resolve;
     // file system open function
     FS_OPEN_FUNCTION open;
+    // filesystem read function
+    FS_READ_FUNCTION read;
     // file system name
     char name[20];
 
@@ -61,6 +68,7 @@ struct file_descriptor
 
 void fs_init();
 int fopen(const char* filename , const char* mode_str);
+int fread(void* ptr , uint32_t size , uint32_t nmemb, int fd);
 void fs_insert_filesystem(struct filesystem* filesystem);
 struct filesystem* fs_resolve(struct disk* disk);
 
