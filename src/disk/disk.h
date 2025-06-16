@@ -2,30 +2,29 @@
 #define DISK_H
 
 #include "fs/file.h"
-typedef unsigned int BINGOS_DISK_TYPE;
 
-// represents a real physical hard disk
-#define BINGOS_DISK_TYPE_REAL 0
+typedef unsigned int PEACHOS_DISK_TYPE;
 
-/* Representation of the disk*/
+
+// Represents a real physical hard disk
+#define PEACHOS_DISK_TYPE_REAL 0
+
 struct disk
 {
-    // id of the disk can be used for better implementation to handle multple disks
-    int id;
-    // type of the disk
-    BINGOS_DISK_TYPE type;
-    // sector size of the disk
+    PEACHOS_DISK_TYPE type;
     int sector_size;
-    // filesystem binded to this disk
+
+    // The id of the disk
+    int id;
+
     struct filesystem* filesystem;
 
-    // private data of our filesystem
+    // The private data of our filesystem
     void* fs_private;
-
 };
 
 void disk_search_and_init();
-struct disk* disk_get (int index);
-/** Read form Disk `disk` in LBA `lba` `total` sectors in buffer `buf` */
-int disk_read_block(struct disk* idisk , unsigned int lba , int total , void* buf);
+struct disk* disk_get(int index);
+int disk_read_block(struct disk* idisk, unsigned int lba, int total, void* buf);
+
 #endif

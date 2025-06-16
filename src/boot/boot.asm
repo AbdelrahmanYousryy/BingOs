@@ -1,172 +1,152 @@
-; Bios loads this bootloader from the first sector of the bootable drive
-; into memory at address 0x7C00 
-ORG 0x7c00 ; makes sure that this code is at 0x7C00
-; using 16 bits code
+ORG 0x7c00
 BITS 16
 
-; define the code and data segment offsets inside the GDT
-CODE_SEG equ gdt_code - gdt_start ; calculates the offset of the code segment
-DATA_SEG equ gdt_data - gdt_start ; calculates the offset of the data segment
+CODE_SEG equ gdt_code - gdt_start
+DATA_SEG equ gdt_data - gdt_start
 
-jmp short start ; jump to the start label
+jmp short start
 nop
 
+; FAT16 Header
+OEMIdentifier           db 'PEACHOS '
+BytesPerSector          dw 0x200
+SectorsPerCluster       db 0x80
+ReservedSectors         dw 200
+FATCopies               db 0x02
+RootDirEntries          dw 0x40
+NumSectors              dw 0x00
+MediaType               db 0xF8
+SectorsPerFat           dw 0x100
+SectorsPerTrack         dw 0x20
+NumberOfHeads           dw 0x40
+HiddenSectors           dd 0x00
+SectorsBig              dd 0x773594
 
-; FAT16 Boot Sector Header
-;The next few lines store FAT16 filesystem metadata.
-OEMIdentifier       db 'BINGOS  '   ; 8 bytes identifier                        
-BytesPerSector      dw 0x200        ; 512 bytes per sector                      
-SectorsPerCluster   db 0x80         ; 128 sector per cluster                        
-ReservedSectors     dw 200          ; 200 Sectors reserved for the kernel       
-FatCopies           db 0x02         ; 2 Fat Copies ( the original and a backuo)
-RootDirEntries      dw 0x40         ; 64 Root Directories entries               
-NumSectors          dw 0x00         ; Number of sectors (0 for large disks)     
-MediaType           db 0xF8         ; Media descriptor ( Hard Drive )           
-SectorsPerFat       dw 0x100        ; Number of sectors per FAT table           
-SectorsPerTrack     dw 0x20         ; 32 Sectors per track                      
-NumberofHeads       dw 0x40         ; 64 heads (CHS addressing)                 
-HiddenSectors       dd 0x00         ; Hidden sectors before partiotion          
-SectorsBig          dd 0x773594     ; large sector count                            
-
-; Extended BPB (Dos 4.00) for Identification
-DriveNumber         db 0x80
-WinNTBit            db 0x00
-Signature           db 0x29
-VolumeID            dd 0xD105
-VolumeIDString      db 'BINGOS BOOT'
-SystemIDString      db 'FAT16   '
+; Extended BPB (Dos 4.0)
+DriveNumber             db 0x80
+WinNTBit                db 0x00
+Signature               db 0x29
+VolumeID                dd 0xD105
+VolumeIDString          db 'PEACHOS BOO'
+SystemIDString          db 'FAT16   '
 
 
-; start label
 start:
-    ; changing code segment to 0x7c0
-    jmp 0 : step2
+    jmp 0:step2
 
 step2:
-    cli ; clear Interrupts
-    ; setiing the segments manually to make sure its in 0x7c00
-    mov ax , 0x00
-    mov ds , ax ; Data Segmengt
-    mov es , ax ; Extra Segment
-    mov ss , ax ; Stack Segment
-    mov sp , 0x7c00c ;Stack Pointer
-    sti              ; Enable Interrupts
+    cli ; Clear Interrupts
+    mov ax, 0x00
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov sp, 0x7c00
+    sti ; Enables Interrupts
 
-; The Following Lines are responsible for switching to the protected mode
 .load_protected:
-    cli                     ; Disable Interrupt
-    lgdt[gdt_descriptor]    ; Load the Global Descriptor Table
-    ; Enbale Protected Mode
-    mov eax , cr0           
-    or eax , 0x1
-    mov cr0 , eax
-    jmp CODE_SEG:load_32
-    jmp $
-; Creating GDT
+    cli
+    lgdt[gdt_descriptor]
+    mov eax, cr0
+    or eax, 0x1
+    mov cr0, eax
+    jmp CODE_SEG:load32
+    
+; GDT
 gdt_start:
 gdt_null:
     dd 0x0
     dd 0x0
 
 ; offset 0x8
-gdt_code:        ; Defining The code Segment
-    dw 0xffff    ; segment limit first 0-15 bits
-    dw 0         ; Base First 0-15 bits
-    db 0         ; Base 16 - 32 bits
-    db 0x9a      ; access byte
-    db 11001111b ; High 4 bit Flags and low 4 bit flags 
-    db 0         ; Base 24 - 31 bits
+gdt_code:     ; CS SHOULD POINT TO THIS
+    dw 0xffff ; Segment limit first 0-15 bits
+    dw 0      ; Base first 0-15 bits
+    db 0      ; Base 16-23 bits
+    db 0x9a   ; Access byte
+    db 11001111b ; High 4 bit flags and the low 4 bit flags
+    db 0        ; Base 24-31 bits
 
-; offset 0x10 
-gdt_data:        ; Defining The Data Segment
-    dw 0xffff    ; Segment limit first 0-15 bits
-    dw 0         ; Base First 0-15 bits
-    db 0         ; Base 16 - 32 bits
-    db 0x92      ; access byte
-    db 11001111b ; High 4 bit Flags and low 4 bit flags 
-    db 0         ; Base 24 - 31 bits
+; offset 0x10
+gdt_data:      ; DS, SS, ES, FS, GS
+    dw 0xffff ; Segment limit first 0-15 bits
+    dw 0      ; Base first 0-15 bits
+    db 0      ; Base 16-23 bits
+    db 0x92   ; Access byte
+    db 11001111b ; High 4 bit flags and the low 4 bit flags
+    db 0        ; Base 24-31 bits
 
 gdt_end:
 
-
-
 gdt_descriptor:
-    dw gdt_end - gdt_start -1
+    dw gdt_end - gdt_start-1
     dd gdt_start
+ 
+ [BITS 32]
+ load32:
+    mov eax, 1
+    mov ecx, 100
+    mov edi, 0x0100000
+    call ata_lba_read
+    jmp CODE_SEG:0x0100000
 
-
-; The Following Lines of code are executed in the protecteed mode
-[BITS 32]
-load_32:
-    ; load the kernel into memory
-    mov eax , 1         ; The starting sector beacuse 0 is for the bootloader
-    mov ecx , 100       ; total number of sectors
-    mov edi , 0x0100000 ; the address in memory we want to load the kernel to
-    call ata_lba_read   ; load the kernel
-    jmp CODE_SEG:0x0100000 ; jump to kernel code
-
-; now the driver for talking to ATA controller
 ata_lba_read:
-    mov ebx, eax       ; Back up the full 32-bit LBA value into EBX for later use.
-    shr eax, 24        ; Shift the LBA value 24 bits to the right, leaving only the highest 8 bits in AL.
-    or eax , 0xE0      ; selects the master drive
-    mov dx, 0x1F6      ; Set DX to the I/O port address (0x1F6) that expects the highest 8 bits of the LBA.
-    out dx, al         ; Write the value in AL (the highest 8 bits of the original LBA) to the port.
+    mov ebx, eax, ; Backup the LBA
+    ; Send the highest 8 bits of the lba to hard disk controller
+    shr eax, 24
+    or eax, 0xE0 ; Select the  master drive
+    mov dx, 0x1F6
+    out dx, al
+    ; Finished sending the highest 8 bits of the lba
 
-    mov eax , ecx      ; load ax with the total sectors to read
-    mov dx , 0x1F2     ; Set DX to the I/O port address (0x1F2) that expects the total number of sectors to read. 
-    out dx , al        ; write the value of al (the total sectors to read) into the port
+    ; Send the total sectors to read
+    mov eax, ecx
+    mov dx, 0x1F2
+    out dx, al
+    ; Finished sending the total sectors to read
 
-    ; Sending more bits of the LBA
-    mov eax , ebx       
-    mov dx , 0x1F3      
-    out dx , al
-    ; Sending more bits of the LBA
-    mov eax , ebx
-    mov dx , 0x1F4
-    shr eax , 8
-    out dx , al
-    ; Sending more bits of the LBA
-    mov eax , ebx
-    mov dx , 0x1F5
-    shr eax , 16
-    out dx , al
+    ; Send more bits of the LBA
+    mov eax, ebx ; Restore the backup LBA
+    mov dx, 0x1F3
+    out dx, al
+    ; Finished sending more bits of the LBA
 
-    ; Sending the Command
-    mov dx , 0x1F7
-    mov al , 0x20
-    out dx , al
+    ; Send more bits of the LBA
+    mov dx, 0x1F4
+    mov eax, ebx ; Restore the backup LBA
+    shr eax, 8
+    out dx, al
+    ; Finished sending more bits of the LBA
 
+    ; Send upper 16 bits of the LBA
+    mov dx, 0x1F5
+    mov eax, ebx ; Restore the backup LBA
+    shr eax, 16
+    out dx, al
+    ; Finished sending upper 16 bits of the LBA
 
-   ; Read all sectors into memory  
+    mov dx, 0x1f7
+    mov al, 0x20
+    out dx, al
+
+    ; Read all sectors into memory
 .next_sector:
     push ecx
 
-
 ; Checking if we need to read
 .try_again:
-    mov dx , 0x1F7 ; read data from this port
-    in al , dx     ; save the data into al
-    test al , 8    ; check for this mask
-    jz .try_again  ; if fails try again
+    mov dx, 0x1f7
+    in al, dx
+    test al, 8
+    jz .try_again
 
 ; We need to read 256 words at a time
-    mov ecx , 256
-    mov dx , 0x1F0
-    rep insw     ; reads a word from the port specified in dx and into the memory location ES:DI
-    ; rep repeats this ecx times
-    ; so basically the latest 3 lines says to read from 0x1F0 a word 256 times which is 512 bytes
-    ; which is 1 sector into the place specified in es:di which is 0x0100000 which is the place 
-    ; we want to load the kernel into
-    pop ecx ; restore ecx , now has the total number of sectors wanted
-    loop .next_sector ; this loops from the .next_sector 100 times to read 100 sectors
-    ; loop will loop from .next_sector ecx times, every time we start by pushing ecx 
-    ; to keep its loop count and uses this count when looping by popping it again
-
-    ; end of reading sectors
+    mov ecx, 256
+    mov dx, 0x1F0
+    rep insw
+    pop ecx
+    loop .next_sector
+    ; End of reading sectors into memory
     ret
 
-
-; BootLoader Signature
 times 510-($ - $$) db 0
 dw 0xAA55

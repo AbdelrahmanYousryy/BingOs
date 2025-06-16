@@ -1,123 +1,111 @@
 #include "kernel.h"
-#include <stdint.h>
 #include <stddef.h>
-#include"idt/idt.h"
-#include "io/io.h"
+#include <stdint.h>
+#include "idt/idt.h"
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
-#include "disk/disk.h"
-#include "fs/file.h"
 #include "string/string.h"
+#include "fs/file.h"
+#include "disk/disk.h"
+#include "fs/pparser.h"
 #include "disk/streamer.h"
-// Pointer to the specific address for writing to screen
+
 uint16_t* video_mem = 0;
-// counters to track the current location to print
-uint16_t terminal_row =  0;
-uint16_t terminal_col =  0;
+uint16_t terminal_row = 0;
+uint16_t terminal_col = 0;
 
-/**  make the apropriate 2 bytes hex for the character */
-uint16_t terminal_make_char (char c , char color)
+uint16_t terminal_make_char(char c, char colour)
 {
-    // reversed due to endiness
-    return ( color << 8) | c ;
+    return (colour << 8) | c;
 }
 
-/** display a specific char at a specific location on screen */
-void terminal_putchar(int x , int y , char c , char color)
+void terminal_putchar(int x, int y, char c, char colour)
 {
-    video_mem[(x* VGA_HEIGHT + y)] = terminal_make_char(c,color); 
-
+    video_mem[(y * VGA_WIDTH) + x] = terminal_make_char(c, colour);
 }
 
-/** Display character without specifying the location */
-void terminal_writechar(char c , char color)
+void terminal_writechar(char c, char colour)
 {
-    // implementing new line
-    if(c == '\n')
+    if (c == '\n')
     {
-        terminal_row+=1;
-        terminal_col=0;
+        terminal_row += 1;
+        terminal_col = 0;
         return;
     }
-    terminal_putchar(terminal_row,terminal_col,c,color);
-    terminal_col+=1;
-    // checkk whether the row end
-    if(terminal_col>=VGA_WIDTH)
+
+    terminal_putchar(terminal_col, terminal_row, c, colour);
+    terminal_col += 1;
+    if (terminal_col >= VGA_WIDTH)
     {
-        terminal_col=0;
-        terminal_row+=1;
-    }
-
-}
-
-
-/** Print String to Terminal */
-void print(const char* str)
-{
-    for(size_t i = 0 ; i <strlen(str);i++)
-    {
-        terminal_writechar(str[i],15);
+        terminal_col = 0;
+        terminal_row += 1;
     }
 }
-
-/** Clear The Terminal */
 void terminal_initialize()
 {
-    terminal_row =  0;
-    terminal_col =  0;
     video_mem = (uint16_t*)(0xB8000);
-    for(int y = 0 ; y <VGA_HEIGHT ; y++)
+    terminal_row = 0;
+    terminal_col = 0;
+    for (int y = 0; y < VGA_HEIGHT; y++)
     {
         for (int x = 0; x < VGA_WIDTH; x++)
         {
-            terminal_putchar(x,y,' ',0);
+            terminal_putchar(x, y, ' ', 0);
         }
-        
-    }
-
+    }   
 }
 
-static struct paging_4gb_chunck*  kernel_chunk = 0;
+
+
+void print(const char* str)
+{
+    size_t len = strlen(str);
+    for (int i = 0; i < len; i++)
+    {
+        terminal_writechar(str[i], 15);
+    }
+}
+
+
+static struct paging_4gb_chunk* kernel_chunk = 0;
 void kernel_main()
 {
-    // initialize terminal
     terminal_initialize();
-    
-    print("Hello World!\n");
-    
+    print("Hello world!\ntest");
+
     // Initialize the heap
     kheap_init();
-    
 
-    // Initialize the filesystem
+    // Initialize filesystems
     fs_init();
-    // search and initialize the disks
+
+    // Search and initialize the disks
     disk_search_and_init();
-    //Initialize Interrupt Descriptor Table
+
+    // Initialize the interrupt descriptor table
     idt_init();
 
     // Setup paging
-    kernel_chunk=paging_new_4gb(PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL | PAGING_IS_PRESENT);
-
-    // switch to kernel  paging chunck
-    paging_switch(paging_4gb_chunck_get_directory(kernel_chunk));
-
+    kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
     
-    //print(ptr);
-    // Enable Paging
+    // Switch to kernel paging chunk
+    paging_switch(paging_4gb_chunk_get_directory(kernel_chunk));
+
+    // Enable paging
     enable_paging();
     
-
-
-    // Enable The system Interrupts
+    // Enable the system interrupts
     enable_interrupts();
 
-    int fd = fopen("0:/hello.txt","r");
-    if(fd)
+    int fd = fopen("0:/hello.txt", "r");
+    if (fd)
     {
-        print("We Opened hello.txt");
+        print("\nWe opened hello.txt\n");
+        char buf[14];
+        fread(buf, 13, 1, fd);
+        // null terminator
+        buf[13] = 0x00;
+        print(buf);
     }
-    while(1);
-
+    while(1) {}
 }
-
