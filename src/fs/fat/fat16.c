@@ -13,22 +13,24 @@
 #define PEACHOS_FAT16_BAD_SECTOR 0xFF7
 #define PEACHOS_FAT16_UNUSED 0x00
 
-
+// Fat Directory entry attribures bitmask
 typedef unsigned int FAT_ITEM_TYPE;
-#define FAT_ITEM_TYPE_DIRECTORY 0
-#define FAT_ITEM_TYPE_FILE 1
+#define FAT_ITEM_TYPE_DIRECTORY 0 //  Directory
+#define FAT_ITEM_TYPE_FILE 1      //  File
 
-// Fat directory entry attributes bitmask
-#define FAT_FILE_READ_ONLY 0x01
-#define FAT_FILE_HIDDEN 0x02
-#define FAT_FILE_SYSTEM 0x04
-#define FAT_FILE_VOLUME_LABEL 0x08
-#define FAT_FILE_SUBDIRECTORY 0x10
-#define FAT_FILE_ARCHIVED 0x20
-#define FAT_FILE_DEVICE 0x40
-#define FAT_FILE_RESERVED 0x80
+// Fat directory entry attributes bitmask that will represent directories
+#define FAT_FILE_READ_ONLY      0x01
+#define FAT_FILE_HIDDEN         0x02
+#define FAT_FILE_SYSTEM         0x04
+#define FAT_FILE_VOLUME_LABEL   0x08
+#define FAT_FILE_SUBDIRECTORY   0x10
+#define FAT_FILE_ARCHIVED       0x20
+#define FAT_FILE_DEVICE         0x40
+#define FAT_FILE_RESERVED       0x80
 
 
+/** The Following headers are used to store the header retrieved from the drive */
+// Extended Header
 struct fat_header_extended
 {
     uint8_t drive_number;
@@ -37,26 +39,30 @@ struct fat_header_extended
     uint32_t volume_id;
     uint8_t volume_id_string[11];
     uint8_t system_id_string[8];
-} __attribute__((packed));
+} __attribute__((packed)); // attribute packed assures that the compiler doesnt rearranged
+                            // the struct
 
+// Original header
 struct fat_header
 {
-    uint8_t short_jmp_ins[3];
-    uint8_t oem_identifier[8];
-    uint16_t bytes_per_sector;
-    uint8_t sectors_per_cluster;
-    uint16_t reserved_sectors;
-    uint8_t fat_copies;
-    uint16_t root_dir_entries;
-    uint16_t number_of_sectors;
-    uint8_t media_type;
-    uint16_t sectors_per_fat;
-    uint16_t sectors_per_track;
+    uint8_t short_jmp_ins[3];       // to carry jump short start (machine code)
+    uint8_t oem_identifier[8];      // 8 bytes identifer
+    uint16_t bytes_per_sector;      // 512 bytes per secor
+    uint8_t sectors_per_cluster;    // 128 sector per cluster
+    uint16_t reserved_sectors;      // 200 sectors reserved for the kernel before allocation table
+    uint8_t fat_copies;             // 2 fat copies (original and backup)
+    uint16_t root_dir_entries;      // 64 root directories entries
+    uint16_t number_of_sectors;     // Number of sectors (0 for large disks)
+    uint8_t media_type;             // 32 Sectors per track
+    uint16_t sectors_per_fat;       // 64 Heads (CHS addressing)
+    uint16_t sectors_per_track;     // Hidden sectors before Partition
     uint16_t number_of_heads;
     uint32_t hidden_setors;
     uint32_t sectors_big;
 } __attribute__((packed));
 
+
+// this holds both original and extendeed header
 struct fat_h
 {
     struct fat_header primary_header;
@@ -66,48 +72,65 @@ struct fat_h
     } shared;
 };
 
+/* Representation of an item (Directory or File) in the Fat16 filesystem*/
 struct fat_directory_item
 {
-    uint8_t filename[8];
-    uint8_t ext[3];
-    uint8_t attribute;
-    uint8_t reserved;
-    uint8_t creation_time_tenths_of_a_sec;
-    uint16_t creation_time;
-    uint16_t creation_date;
-    uint16_t last_access;
-    uint16_t high_16_bits_first_cluster;
-    uint16_t last_mod_time;
-    uint16_t last_mod_date;
+    uint8_t filename[8];                    // name of the item
+    uint8_t ext[3];                         // extension of the item
+    uint8_t attribute;                      // two bytes for item's attributes
+    uint8_t reserved;                       // res
+    uint8_t creation_time_tenths_of_a_sec;  // creation time of directory irem 
+    uint16_t creation_time;                 //
+    uint16_t creation_date;                 // creation date
+    uint16_t last_access;                   // last access of item
+    /* Highest 16 bits of the first cluster which carries the item data
+       whether its a data of another item (in case of directory) or 
+       holds a data of the file (in case of file)*/
+    uint16_t high_16_bits_first_cluster;    
+    uint16_t last_mod_time;                 
+    uint16_t last_mod_date; 
+    /* Lowest 16 bits of the first cluster which carries the item data
+       whether its a data of another item (in case of directory) or 
+       holds a data of the file (in case of file)*/
     uint16_t low_16_bits_first_cluster;
-    uint32_t filesize;
+    uint32_t filesize;                      // file size
 } __attribute__((packed));
 
+
+/* Helper Structure for managing directory item easily*/
 struct fat_directory
 {
-    struct fat_directory_item* item;
-    int total;
-    int sector_pos;
-    int ending_sector_pos;
+    
+    struct fat_directory_item* item;    // Pointer to the item rep ( first in directory )
+    int total;                          // Total number of items inside the directory
+    int sector_pos;                     // The first sector that contains data for this directory
+    int ending_sector_pos;              // The last sector containing data for this directory
 };
 
+/* Helper structure for managing items mainly*/
 struct fat_item
 {
     union 
     {
+        // if its a file then it will access the item struct directly
         struct fat_directory_item* item;
+        // if its a directory it accesses the helper dir structure
         struct fat_directory* directory;
     };
     
+    // type of the irem
     FAT_ITEM_TYPE type;
 };
 
+/* Representation of open file*/
 struct fat_file_descriptor
 {
     struct fat_item* item;
     uint32_t pos;
 };
 
+
+/* Information to help us manage the filesystem*/
 struct fat_private
 {
     struct fat_h header;
@@ -117,21 +140,26 @@ struct fat_private
     struct disk_stream* cluster_read_stream;
     // Used to stream the file allocation table
     struct disk_stream* fat_read_stream;
-
-
     // Used in situations where we stream the directory
     struct disk_stream* directory_stream;
+    /* We Make Multiple streams to allow us to retreive data from the disk easily 
+    and seek to different parts of the file system  and read maybe 5 or 10 bytes
+    at a time rather than the whole sector */
 };
 
+/** Definiton of fat16 functions */
 int fat16_resolve(struct disk* disk);
 void* fat16_open(struct disk* disk, struct path_part* path, FILE_MODE mode);
 int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmemb, char* out_ptr);
+int fat16_seek(void* private,uint32_t offset , FILE_SEEK_MODE seek_mode);
 
+// Definition of the fat16 file system
 struct filesystem fat16_fs =
 {
     .resolve = fat16_resolve,
     .open = fat16_open,
-    .read = fat16_read
+    .read = fat16_read,
+    .seek = fat16_seek
 };
 
 struct filesystem* fat16_init()
@@ -658,6 +686,48 @@ int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmem
     }
 
     res = nmemb;
+out:
+    return res;
+}
+
+int fat16_seek(void* private,uint32_t offset , FILE_SEEK_MODE seek_mode)
+{
+    int res = 0;
+    // retrieve the descriptor of the file
+    struct fat_file_descriptor* desc = private;
+    // get the item helper function
+    struct fat_item* desc_item = desc->item;
+    // check if its not a file
+    if(desc_item->type != FAT_ITEM_TYPE_FILE)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+    // if its a file get the file rep
+    struct fat_directory_item* item = desc_item->item;
+    // check for file size
+    if(offset >= item->filesize)
+    {
+        res = -EIO;
+        goto out;
+    }
+    // different seek modes
+    switch (seek_mode)
+    {
+        case SEEK_SET:
+        desc->pos = offset;
+        break;
+        case SEEK_END:
+        res = -EUNIMP;
+        break;
+        case SEEK_CUR:
+        desc->pos +=offset;
+        break;
+        default:
+        res = -EINVARG;
+        break;
+    }
+    return res;
 out:
     return res;
 }
